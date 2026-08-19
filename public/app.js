@@ -221,14 +221,19 @@ $("#ps").onclick = async () => {
 };
 
 // ---------- Tiempo real ----------
-const socket = io();
-socket.on("state", (x) => { players = x.players || []; game = x.game || game; render(); renderMeta(); refreshNotifButton(); });
-
 (async () => {
-  const c = new URLSearchParams(location.search).get("partido") || localStorage.getItem("f7code");
-  if (c) { try { const x = await api("/api/games/" + c); openGame(c, x.name); } catch {} }
-})();
+  const c = new URLSearchParams(location.search).get("partido");
 
+  if (c) {
+    try {
+      const code = c.trim().toUpperCase();
+      const x = await api("/api/games/" + code);
+      openGame(code, x.name);
+    } catch {
+      alert("El partido no existe o ya fue eliminado.");
+    }
+  }
+})();
 // ================= Notificaciones =================
 // Notificaciones del navegador + Web Push real (VAPID) vía Service Worker,
 // para que lleguen aunque la pestaña esté cerrada.
