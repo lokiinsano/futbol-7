@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="es"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fútbol 7 · Partido</title>
+<meta name="theme-color" content="#06110a">
+<style>
+:root{--bg:#06110a;--panel:#0d2015;--line:#254b31;--text:#f4fff7;--muted:#9db7a5;--green:#39eb79;--red:#ff6874;--yellow:#ffd166;--pitch:#168247}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#123820,#06110a 58%);color:var(--text);font-family:Inter,system-ui,sans-serif}
+header{padding:18px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);position:sticky;top:0;background:#06110ae8;backdrop-filter:blur(12px);z-index:5}
+h1{margin:0;font-size:26px}main{max-width:1150px;margin:auto;padding:20px;display:grid;grid-template-columns:1.15fr .85fr;gap:18px}
+.card{background:#0d2015ed;border:1px solid var(--line);border-radius:20px;padding:18px}.hidden{display:none!important}
+button,input,select{font:inherit;border-radius:12px;padding:12px;border:1px solid var(--line)}input,select{background:#07150c;color:white;width:100%}button{background:#173b23;color:white;font-weight:800;cursor:pointer}.primary{background:var(--green);color:#06210e;border-color:var(--green)}
+.ghost{background:transparent}
+.muted{color:var(--muted);font-size:13px}.room{font-weight:900;letter-spacing:2px;color:var(--green);font-size:24px}.share{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}.share button{flex:1;min-width:120px}
+.form{display:grid;gap:10px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}.stat{background:#08160d;border:1px solid #1c3b25;border-radius:12px;padding:10px}.stat b{display:block;font-size:20px}.stat span{font-size:10px;color:var(--muted)}
+.pitch{position:relative;aspect-ratio:1.65;background:var(--pitch);border:4px solid #dcffe5;border-radius:10px;overflow:hidden;box-shadow:inset 0 0 80px #07552b}.pitch:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 49.7%,#dcffe5 50%,transparent 50.3%)}.center{position:absolute;width:22%;aspect-ratio:1;border:3px solid #dcffe5;border-radius:50%;left:39%;top:50%;transform:translateY(-50%)}.box{position:absolute;top:29%;height:42%;width:12%;border:3px solid #dcffe5}.left{left:0}.right{right:0}
+.player{position:absolute;transform:translate(-50%,-50%);z-index:2;text-align:center;cursor:pointer}.ball{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:#fff;color:#08200f;border:3px solid #07351c;font-weight:900;box-shadow:0 5px 12px #0006}.player small{display:block;background:#06140cdd;border-radius:7px;padding:3px 6px;margin-top:3px;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px;font-weight:800}
+.list{display:grid;gap:8px;max-height:580px;overflow:auto}.row{background:#08160d;border:1px solid #1c3b25;border-radius:14px;padding:11px;display:grid;grid-template-columns:1fr auto;gap:8px}.name{font-weight:900}.meta{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px}.pill{font-size:10px;padding:4px 7px;border-radius:99px;background:#173522}.voy{background:#123f24;color:#70f596}.pendiente{background:#493916;color:#ffd879}.cancelado{background:#431b20;color:#ff939b}.actions{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}.actions button{padding:8px;font-size:11px}
+.modal{position:fixed;inset:0;background:#000b;display:grid;place-items:center;padding:15px;z-index:20;overflow:auto}.modal>div{width:min(430px,100%);background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:20px;margin:auto}.posgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.pos.active{background:var(--green);color:#06210e;border-color:var(--green)}
+.notice{padding:10px;border-radius:12px;background:#12351f;color:#bdf5ca;font-size:12px;margin-bottom:10px}
+.meta-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0;color:var(--muted);font-size:13px}
+.meta-row b{color:var(--text)}
+.countdown{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}
+.countdown div{background:#08160d;border:1px solid #1c3b25;border-radius:12px;padding:10px;text-align:center}
+.countdown b{display:block;font-size:22px;color:var(--green)}
+.countdown span{font-size:10px;color:var(--muted)}
+.progress{height:8px;border-radius:99px;background:#08160d;overflow:hidden;margin-top:8px;border:1px solid #1c3b25}
+.progress > div{height:100%;background:var(--green)}
+label.field{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+.notif-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.notif-bar button{flex:1;min-width:160px}
+.badge-off{color:var(--muted);font-size:11px}
+fieldset{border:1px solid var(--line);border-radius:14px;padding:12px;margin:0}
+legend{padding:0 6px;color:var(--muted);font-size:12px}
+@media(max-width:850px){main{grid-template-columns:1fr;padding:12px}.list{max-height:none}}
+@media(max-width:500px){header{padding:14px}.card{padding:13px}.pitch{aspect-ratio:1.4}.ball{width:33px;height:33px;font-size:11px}.countdown{grid-template-columns:repeat(4,1fr)}.countdown b{font-size:17px}}
+</style></head><body>
+<header><div><h1>⚽ Fútbol 7</h1><div class="muted">Partidos y formaciones en tiempo real</div></div><button id="homeBtn">Nuevo / Unirse</button></header>
+
+<div id="landing" class="card" style="max-width:760px;margin:30px auto">
+<h2>Organiza tu partido</h2><div class="grid2">
+<div><h3>Crear partido</h3><div class="form">
+  <input id="gameName" placeholder="Ej: Pichanga sábado">
+  <input id="adminPin" placeholder="PIN de administrador" type="password">
+  <label class="field">Fecha y hora del partido
+    <input id="matchDate" type="datetime-local">
+  </label>
+  <label class="field">Cancha (nombre)
+    <input id="courtName" placeholder="Ej: Complejo Los Pinos">
+  </label>
+  <label class="field">Ubicación / dirección
+    <input id="courtLocation" placeholder="Ej: Av. Siempre Viva 123">
+  </label>
+  <label class="field">Cupos totales (jugadores necesarios)
+    <input id="cupos" type="number" min="2" max="30" value="14">
+  </label>
+  <button class="primary" id="create">Crear partido</button>
+</div></div>
+<div><h3>Unirse</h3><div class="form"><input id="joinCode" placeholder="Código (ej. A1B2C3)" maxlength="6"><input id="joinName" placeholder="Tu nombre"><button id="join">Entrar al partido</button></div></div>
+</div></div>
+
+<main id="app" class="hidden">
+<section class="card">
+  <div class="muted">PARTIDO</div><div class="room" id="room"></div><h2 id="title"></h2>
+  <div class="meta-row">
+    <span id="metaCourt"></span>
+    <span id="metaWhen"></span>
+  </div>
+  <div class="countdown hidden" id="countdown">
+    <div><b id="cd-d">0</b><span>DÍAS</span></div>
+    <div><b id="cd-h">0</b><span>HORAS</span></div>
+    <div><b id="cd-m">0</b><span>MIN</span></div>
+    <div><b id="cd-s">0</b><span>SEG</span></div>
+  </div>
+  <div id="countdownDone" class="notice hidden">⚽ ¡El partido ya empezó (o está por empezar)!</div>
+
+  <div class="share">
+    <button id="copy">📋 Copiar invitación</button>
+    <button id="wa">🟢 WhatsApp</button>
+    <button id="admin">🔐 Admin</button>
+  </div>
+  <div class="notif-bar">
+    <button id="notifBtn">🔔 Activar notificaciones</button>
+    <span class="badge-off" id="notifStatus"></span>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><b id="v">0</b><span>VAN</span></div>
+    <div class="stat"><b id="p">0</b><span>PENDIENTES</span></div>
+    <div class="stat"><b id="c">0</b><span>CANCELADOS</span></div>
+  </div>
+  <div class="progress"><div id="cuposBar" style="width:0%"></div></div>
+  <div class="muted" id="cuposLabel" style="margin-top:5px"></div>
+
+  <div class="pitch" id="pitch"><div class="center"></div><div class="box left"></div><div class="box right"></div></div>
+  <p class="muted">Toca a un jugador en la cancha para cambiar su posición.</p>
+</section>
+<section class="card"><h2>Jugadores</h2><div class="notice">Comparte el código con tus amigos. Cada uno entra desde su propio teléfono y queda sincronizado.</div><div class="form"><input id="addName" placeholder="Agregar jugador"><button class="primary" id="add">+ Agregar jugador</button></div><br><div class="list" id="list"></div></section>
+</main>
+
+<div id="modal" class="modal hidden"><div><h2 id="mt">Posición</h2><div class="posgrid" id="posgrid"></div><div style="display:flex;gap:8px;margin-top:15px"><button style="flex:1" id="mc">Cancelar</button><button class="primary" style="flex:1" id="ms">Guardar</button></div></div></div>
+<div id="profileModal" class="modal hidden"><div><h2>Perfil del jugador</h2><p class="muted">Sube una foto o un video corto.</p><input id="profileName" placeholder="Nombre"><label class="muted">Foto <input id="photo" type="file" accept="image/*"></label><label class="muted">Video <input id="video" type="file" accept="video/*"></label><div id="mediaPreview"></div><div style="display:flex;gap:8px;margin-top:12px"><button id="pc">Cancelar</button><button class="primary" id="ps">Guardar perfil</button></div></div></div>
+
+<div id="adminModal" class="modal hidden"><div>
+  <h2>Administrador</h2>
+  <p class="muted">Introduce el PIN que elegiste al crear el partido.</p>
+  <div class="form">
+    <input id="pinCheck" type="password" placeholder="PIN">
+    <fieldset>
+      <legend>Editar partido</legend>
+      <div class="form">
+        <input id="editName" placeholder="Nombre del partido">
+        <label class="field">Fecha y hora<input id="editDate" type="datetime-local"></label>
+        <label class="field">Cancha<input id="editCourt" placeholder="Nombre de la cancha"></label>
+        <label class="field">Ubicación<input id="editLocation" placeholder="Dirección / ubicación"></label>
+        <label class="field">Cupos<input id="editCupos" type="number" min="2" max="30"></label>
+        <button class="primary" id="saveEdit">💾 Guardar cambios</button>
+      </div>
+    </fieldset>
+    <button id="notifyMissing">📣 Avisar jugadores faltantes</button>
+    <button id="ar">♻️ Restablecer jugadores</button>
+  </div>
+  <div style="display:flex;gap:8px;margin-top:10px"><button style="flex:1" id="ac">Cerrar</button></div>
+</div></div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/app.js" defer></script>
+</body></html>

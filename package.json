@@ -1,0 +1,19 @@
+{
+  "name": "futbol7-v4",
+  "version": "4.0.0",
+  "private": true,
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "vapid": "node scripts/generate-vapid.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.8.1",
+    "dotenv": "^16.6.1",
+    "express": "^5.1.0",
+    "pg": "^8.13.1",
+    "socket.io": "^4.8.1",
+    "web-push": "^3.6.7"
+  }
+}

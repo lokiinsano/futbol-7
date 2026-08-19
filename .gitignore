@@ -1,0 +1,5 @@
+﻿node_modules/
+.env
+futbol7.db
+futbol7.db-shm
+futbol7.db-wal
