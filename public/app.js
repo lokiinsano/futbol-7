@@ -135,7 +135,31 @@ $("#notifyMissing").onclick = async () => {
     else alert(r.faltan > 0 ? `Aviso enviado: faltan ${r.faltan} jugadores.` : "Aviso enviado: ¡cupos completos!");
   } catch (e) { alert(e.message); }
 };
+$("#deleteGame").onclick = async () => {
+  const pin = $("#pinCheck").value.trim();
 
+  if (!pin) {
+    alert("Ingresa el PIN de administrador.");
+    return;
+  }
+
+  if (!confirm("¿Seguro que quieres borrar este partido? Esta acción no se puede deshacer.")) {
+    return;
+  }
+
+  try {
+    await api("/api/games/" + code, {
+      method: "DELETE",
+      body: JSON.stringify({ pin })
+    });
+
+    alert("Partido borrado correctamente.");
+    localStorage.removeItem("f7code");
+    location.href = location.pathname;
+  } catch (e) {
+    alert(e.message);
+  }
+};
 // ---------- Posición ----------
 function edit(id) {
   const p = players.find((x) => x.id === id); editId = id; chosen = p.position;

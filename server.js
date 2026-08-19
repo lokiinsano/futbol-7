@@ -170,6 +170,28 @@ app.patch("/api/games/:code", async (req, res) => {
     res.status(500).json({ error: "No se pudo actualizar el partido" });
   }
 });
+app.delete("/api/games/:code", async (req, res) => {
+  try {
+    const g = await db.getGameByCode(req.params.code.toUpperCase());
+
+    if (!g) {
+      return res.status(404).json({ error: "Partido no encontrado" });
+    }
+
+    if (String(req.body.pin || "") !== g.admin_pin) {
+      return res.status(403).json({ error: "PIN incorrecto" });
+    }
+
+    await db.deleteGame(g.id);
+
+    io.to(g.code).emit("gameDeleted");
+
+    res.json({ ok: true });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: "No se pudo borrar el partido" });
+  }
+});
 
 app.post("/api/games/:code/join", async (req, res) => {
   const g = await db.getGameByCode(req.params.code.toUpperCase());
