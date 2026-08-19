@@ -63,11 +63,19 @@ $("#create").onclick = async () => {
 };
 $("#join").onclick = async () => {
   try {
-    const c = $("#joinCode").value.trim().toUpperCase(), n = $("#joinName").value.trim();
-    await api("/api/games/" + c + "/join", { method: "POST", body: JSON.stringify({ name: n }) });
+    const c = $("#joinCode").value.trim().toUpperCase();
+
+    if (!c) {
+      alert("Ingresa el código del partido.");
+      return;
+    }
+
     const g = await api("/api/games/" + c);
+
     openGame(c, g.name);
-  } catch (e) { alert(e.message); }
+  } catch (e) {
+    alert(e.message || "No se pudo encontrar el partido.");
+  }
 };
 $("#add").onclick = async () => {
   const n = $("#addName").value.trim(); if (!n) return;
