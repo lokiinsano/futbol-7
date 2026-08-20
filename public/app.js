@@ -8,6 +8,13 @@ const coords = { POR: [8, 50], LI: [23, 22], DFC: [25, 50], LD: [23, 78], MI: [4
 let code = "", players = [], game = {}, editId = null, chosen = null, countdownTimer = null;
 const socket = io();
 const $ = (x) => document.querySelector(x);
+const esc = (s) => s.replace(/[&<>"']/g, (c) => ({
+  "&": "&amp;",
+  "<": "&lt;",
+  ">": "&gt;",
+  '"': "&quot;",
+  "'": "&#039;"
+}[c]));
 
 async function api(path, opt = {}) {
   const r = await fetch(path, { headers: { "Content-Type": "application/json" }, ...opt });
@@ -243,8 +250,15 @@ $("#ps").onclick = async () => {
     $("#profileModal").classList.add("hidden");
   } catch (e) { alert(e.message); }
 };
-
 // ---------- Tiempo real ----------
+socket.on("state", (x) => {
+  players = x.players || [];
+  game = x.game || game;
+  render();
+  renderMeta();
+  refreshNotifButton();
+});
+
 (async () => {
   const c = new URLSearchParams(location.search).get("partido");
 
